@@ -1,0 +1,21 @@
+# known disposable / temp-mail domains
+yopmail.com
+fivejm.com
+mailinator.com
+guerrillamail.com
+10minutemail.com
+tempmail.com
+temp-mail.org
+throwawaymail.com
+getnada.com
+dispostable.com
+maildrop.cc
+sharklasers.com
+grr.la
+trashmail.com
+fakeinbox.com
+mintemail.com
+mohmal.com
+emailondeck.com
+33mail.com
+spamgourmet.com

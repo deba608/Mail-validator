@@ -1,0 +1,21 @@
+# free consumer mailbox providers
+gmail.com
+googlemail.com
+yahoo.com
+yahoo.co.in
+ymail.com
+outlook.com
+hotmail.com
+live.com
+msn.com
+aol.com
+icloud.com
+me.com
+proton.me
+protonmail.com
+zoho.com
+zohomail.in
+rediffmail.com
+mail.com
+gmx.com
+yandex.com
