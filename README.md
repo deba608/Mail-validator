@@ -1,4 +1,4 @@
-# Vmail
+# Mail Validator
 
 Multi-layer email validation tool. Validates email addresses through syntax checking, DNS resolution, SMTP probing, provider fingerprinting, and classification (disposable/role/free).
 
@@ -13,7 +13,7 @@ Multi-layer email validation tool. Validates email addresses through syntax chec
 ## Project structure
 
 ```
-vmail/
+Mail-validator/
 ├── vmail/
 │   ├── __init__.py
 │   ├── syntax.py         RFC syntax + domain suggestions
@@ -66,4 +66,3 @@ cls = flags(syn.normalized)
 - **DNS timeouts are not treated as proof of absence** — the resolver never caches a negative result as definitive
 - **SMTP 550 is not blindly mapped to INVALID** — policy blocks (Spamhaus, dynamic IPs) and mailbox-full conditions are classified separately
 - **Syntax layer does not check deliverability** — that responsibility belongs to the DNS and SMTP layers
-# Mail-validator
