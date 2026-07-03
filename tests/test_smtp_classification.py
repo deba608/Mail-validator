@@ -63,3 +63,11 @@ def test_plain_user_unknown_is_invalid():
 
 def test_access_denied_is_blocked():
     assert classify_reply(550, "Access denied, banned sender") == "BLOCKED"
+
+
+def test_policy_block_with_invalid_marker_wins_blocked():
+    # Real failure mode: a policy/IP block whose text also contains an
+    # INVALID-marker substring ("recipient rejected") must NOT be fabricated
+    # as INVALID — BLOCKED evidence wins. This is the project's core rule.
+    msg = "5.7.1 Recipient rejected by policy (listed on Spamhaus)"
+    assert classify_reply(550, msg) == "BLOCKED"

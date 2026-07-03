@@ -43,10 +43,10 @@ def classify_reply(code: int | None, message: str | None) -> str:
     if code >= 500:
         if any(m in text for m in _FULL_MARKERS):
             return "FULL_MAILBOX"
-        if any(m in text for m in _INVALID_MARKERS):
-            return "INVALID"
         if any(m in text for m in _BLOCKED_MARKERS):
             return "BLOCKED"
+        if any(m in text for m in _INVALID_MARKERS):
+            return "INVALID"
         return "UNKNOWN"
     return "UNKNOWN"
 
