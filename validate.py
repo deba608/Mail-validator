@@ -3,6 +3,7 @@
 Usage:  python validate.py Raw_Email.xlsx
 Output: Raw_Email_validated.xlsx (input file is never modified)
 """
+import os
 import sys
 import traceback
 from concurrent.futures import ThreadPoolExecutor
@@ -147,7 +148,15 @@ def main(argv: list[str]) -> None:
             row.setdefault("Confidence", 0)
             row.setdefault("Reason", "Run interrupted before this row was checked")
 
-    write_results(str(out_path), rows, headers)
+    try:
+        write_results(str(out_path), rows, headers)
+    except PermissionError:
+        # Target is locked (commonly: open in Excel). Fall back to a
+        # uniquely-named file rather than discarding a completed run.
+        alt = out_path.with_name(f"{out_path.stem}_{os.getpid()}{out_path.suffix}")
+        print(f"\n{out_path.name} is locked (open in Excel?) — writing {alt.name} instead")
+        write_results(str(alt), rows, headers)
+        out_path = alt
     print(f"\nDone. Results: {out_path}")
 
 
