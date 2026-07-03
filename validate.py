@@ -88,7 +88,7 @@ def _to_row(verdict: Verdict, provider, fl, catch, code, evidence_msg) -> dict:
 
 
 def _network_sanity_check(rows: list[dict]) -> None:
-    """If the first 3 unique domains all DNS-timeout, the network is down."""
+    """If all collected unique domains (up to 3) all DNS-timeout, the network is down."""
     seen = []
     for row in rows:
         syn = check_syntax(row["_email"])
@@ -96,7 +96,7 @@ def _network_sanity_check(rows: list[dict]) -> None:
             seen.append(syn.domain)
         if len(seen) == 3:
             break
-    if len(seen) < 3:
+    if len(seen) == 0:
         return
     if all(resolve_domain(d).reason == "DNS_TIMEOUT" for d in seen):
         sys.exit("ERROR: DNS is unreachable — check your internet connection. "
@@ -132,10 +132,14 @@ def main(argv: list[str]) -> None:
             done += 1
             print(f"[{done}/{len(rows)}] {row['_email']} -> {row['Status']}")
 
+    pool = ThreadPoolExecutor(max_workers=MAX_WORKERS)
     try:
-        with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
-            list(pool.map(_process_group, groups))
+        futures = [pool.submit(_process_group, group) for group in groups]
+        for future in futures:
+            future.result()
+        pool.shutdown(wait=True)
     except KeyboardInterrupt:
+        pool.shutdown(wait=False, cancel_futures=True)
         print("\nInterrupted — writing partial results...")
         for row in rows:
             row.setdefault("Status", "TEMPORARY")

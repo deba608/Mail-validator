@@ -1,6 +1,6 @@
 from unittest.mock import patch
 
-from validate import validate_one
+from validate import _network_sanity_check, validate_one
 from vmail.dns_check import DnsResult
 from vmail.smtp_probe import ProbeResult
 
@@ -50,3 +50,27 @@ def test_row_level_exception_becomes_error_status(mock_dns):
     result = validate_one("x@example.com")
     assert result["Status"] == "ERROR"
     assert result["Safe_To_Send"] == "MANUAL"
+
+
+@patch("validate.resolve_domain")
+def test_network_sanity_aborts_on_small_all_timeout_file(mock_dns):
+    mock_dns.return_value = DnsResult(exists=False, reason="DNS_TIMEOUT")
+    rows = [
+        {"_email": "a@example.com"},
+        {"_email": "b@example.org"},
+    ]
+    try:
+        _network_sanity_check(rows)
+        assert False, "expected SystemExit"
+    except SystemExit:
+        pass
+
+
+@patch("validate.resolve_domain")
+def test_network_sanity_passes_when_domains_resolve(mock_dns):
+    mock_dns.return_value = DnsResult(exists=True, mx_hosts=["mx.example.com"])
+    rows = [
+        {"_email": "a@example.com"},
+        {"_email": "b@example.org"},
+    ]
+    _network_sanity_check(rows)
